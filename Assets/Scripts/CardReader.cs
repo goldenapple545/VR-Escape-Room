@@ -17,6 +17,12 @@ public class CardReader : XRSocketInteractor
     [Header("Switch Light")]
     [SerializeField] private MeshRenderer mReaderLight;
     [SerializeField] private Material scanMaterial;
+    [Header("Audio")] 
+    [SerializeField] private AudioSource mAudioSource;
+    [SerializeField] private AudioSource mPadlockAudioSource;
+    [SerializeField] private AudioClip mWrongAudio;
+    [SerializeField] private AudioClip mRightAudio;
+
 
     private Vector3 _startPoint;
     private Vector3 _endPoint;
@@ -39,6 +45,7 @@ public class CardReader : XRSocketInteractor
             if (dotUp < 1 - _allowedUprightErrorRange || dotForward < 1 - _allowedUprightErrorRange) // Если отличия по двум осям больше погрешности, то ... 
             {
                 _swipIsValid = false;
+                mAudioSource.PlayOneShot(mWrongAudio);
             }
         }
     }
@@ -70,6 +77,8 @@ public class CardReader : XRSocketInteractor
         {
             mDoorLock.SetActive(false);
             mHandleToEnable.SetActive(true);
+            mAudioSource.PlayOneShot(mRightAudio);
+            mPadlockAudioSource.Play();
         }
         
         _cardTransform = null;

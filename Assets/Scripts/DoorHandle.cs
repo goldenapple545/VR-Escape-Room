@@ -14,6 +14,7 @@ public class DoorHandle : XRGrabInteractable
     [SerializeField] private Transform doorHandle;
     [SerializeField] private Transform minPosition;
     [SerializeField] private Transform maxPosition;
+    [SerializeField] private AudioSource mAudioSource;
     
     public float doorMass = 2;
 
@@ -24,6 +25,13 @@ public class DoorHandle : XRGrabInteractable
 
         transform.position = doorHandle.position;
         transform.rotation = doorHandle.rotation;
+        mAudioSource.Pause();
+    }
+
+    protected override void OnSelectEntered(SelectEnterEventArgs args)
+    {
+        base.OnSelectEntered(args);
+        mAudioSource.Play();
     }
 
     void Update()
@@ -37,15 +45,19 @@ public class DoorHandle : XRGrabInteractable
         Vector3 dist = transform.localPosition - door.localPosition;
         float volume = Vector3.Dot(dist, transform.position);
         float speed = Math.Abs(volume) * Time.deltaTime;
+        
+        mAudioSource.volume = speed*100;
 
         // Ограничения движения двери
         if (transform.position.z > minPosition.position.z)
         {
             door.position = Vector3.MoveTowards(door.position, minPosition.position + new Vector3(0, 0, -door.position.x + 0.1f), speed/doorMass);
+            mAudioSource.volume = 0;
         }
         else if (transform.position.z < maxPosition.position.z)
         {
             door.position = Vector3.MoveTowards(door.position, maxPosition.position + new Vector3(0, 0, -door.position.x + 0.1f), speed/doorMass);
+            mAudioSource.volume = 0;
         }
         else
         {

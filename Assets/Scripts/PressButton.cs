@@ -30,6 +30,7 @@ public class PressButton : XRButton
     public void Click()
     {
         isClicked = true;
+        gameObject.GetComponent<AudioSource>().Play();
     }
 
     protected override void OnHoverExited(HoverExitEventArgs args)
